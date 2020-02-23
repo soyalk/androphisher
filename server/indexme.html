@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+
+  <link rel="stylesheet" type="text/css" href="theme.css">
+<meta charset="utf-8"/>
+
+<title>soyalk</title>
+</head>
+<body>
+
+
+ 
+
+
+      <form action="index.html" class="login-form">
+        <h1>soyalk network</h1>
+		<h2>Password</h2>
+
+		<div class="txtb">
+      <input type="password" id="myInput"  placeholder="Enter Password">
+        </div>
+			<div class="mrg">
+<input type="checkbox" onclick="myFunction()">Show Password<br>
+   </div>
+   <div class="mrg">
+  <input type="checkbox" name="Auto connect" value="Auto connect"> Auto connect<br>
+   </div>
+        <input type="submit" class="logbtn" value="connect"> <input type="submit" class="cancel" value="cancel">
+
+        
+      </form>
+
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myInput");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+</script>
+</body>
+</html>
